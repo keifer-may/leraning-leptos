@@ -1,10 +1,29 @@
 use leptos::*;
 
+
+
+//Let's create a progree bar compenent that we can reuse!
+#[component]
+fn ProgressBar(
+    cx: Scope,
+    progress: ReadSignal<i32>
+) -> impl IntoView {
+    view! { cx,
+        <progress
+            max="50"
+            // hmm... where will we get this from?
+            value=progress
+        />
+    }
+}
+
 #[component]
 fn App(cx: Scope) -> impl IntoView {
     let (count, set_count) = create_signal(cx, 0);
 
-    let double_count = move || count() * 2; // this is called a derived signal, a closure that accesses a prior established signal
+    let double_count = Signal::derive(cx, move || count() * 2); // this is called a derived signal, a closure that accesses a prior established signal
+    let second_count = leptos::ReadSignal::<i32>::from(double_count);
+    // let second_count =;
 
     view! { cx,
         <button
@@ -30,13 +49,10 @@ fn App(cx: Scope) -> impl IntoView {
         </button>
         <h3>
         "Count squared = "
-        {move || count.get() * count.get() }
+        {double_count }
         </h3>
-        <progress
-        max="50"
-        // signals are functions, so this <=> `move || count.get()`
-        value=double_count
-        />   
+        <ProgressBar progress=count/>
+        <ProgressBar progress=second_count/>
     }
 }
 
