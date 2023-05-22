@@ -6,7 +6,7 @@ use leptos::*;
 #[component]
 fn ProgressBar(
     cx: Scope,
-    progress: ReadSignal<i32>
+    #[prop(into)] progress:Signal<i32>
 ) -> impl IntoView {
     view! { cx,
         <progress
@@ -21,9 +21,9 @@ fn ProgressBar(
 fn App(cx: Scope) -> impl IntoView {
     let (count, set_count) = create_signal(cx, 0);
 
-    let double_count = Signal::derive(cx, move || count() * 2); // this is called a derived signal, a closure that accesses a prior established signal
-    let second_count = leptos::ReadSignal::<i32>::from(double_count);
-    // let second_count =;
+    let double_count = Signal::derive(cx, move || count() * 2); // In order to take this into a prop, must use Signal::derive which requires the scope [cx]
+    let count_squared = Signal::derive(cx, move || count() * count()); // this is called a derived signal, a closure that accesses a prior established signal
+
 
     view! { cx,
         <button
@@ -33,7 +33,6 @@ fn App(cx: Scope) -> impl IntoView {
             class=("red", move || i32::abs(count.get()) % 2 == 1)
         >
             "Increase count"
-            // {move || count.get()}
         </button>
         <h2>
             "Count = "
@@ -45,14 +44,14 @@ fn App(cx: Scope) -> impl IntoView {
             }
         >
             "Decrease count"
-            // {move || count.get()}
         </button>
         <h3>
         "Count squared = "
-        {double_count }
+        {count_squared}
         </h3>
         <ProgressBar progress=count/>
-        <ProgressBar progress=second_count/>
+        <ProgressBar progress=double_count/>
+        <ProgressBar progress=count_squared/>
     }
 }
 
