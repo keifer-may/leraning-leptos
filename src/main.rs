@@ -6,7 +6,7 @@ use leptos::*;
 #[component]
 fn ProgressBar(
     cx: Scope,
-    #[prop(into)] progress:Signal<i32>
+    #[prop(into)] progress:Signal<i32> // deriving the prop(into) method allows you to pass any signal, readsignal, or memo into the component
 ) -> impl IntoView {
     view! { cx,
         <progress
